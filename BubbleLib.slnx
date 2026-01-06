@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BubbleLib/BubbleLib.csproj" />
+  <Project Path="Examples/SaveGameManager/SaveGameManager.csproj" Id="4d5929f8-cb99-4f2b-ad97-0ed78e802849" />
+</Solution>
