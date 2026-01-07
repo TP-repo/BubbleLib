@@ -364,3 +364,4 @@ FodyWeavers.xsd
 *.dll
 /BubbleLib/Properties/launchSettings.json
 /.editorconfig
+/CopyAndLaunch.ps1

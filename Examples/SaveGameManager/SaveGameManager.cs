@@ -23,8 +23,6 @@ namespace SaveGameManager
 
         public override void Initialize()
         {
-            Save(1);
-
             var mainMenu = Bubble.MainMenu!;
 
             MenuItem mainMenuItem = new MenuItem(Name, () => { mainMenu.SetPage("SaveGameManager"); });
@@ -37,18 +35,21 @@ namespace SaveGameManager
             mainMenu.AddMenuItem("SaveGameManager", saveMenuItem);
 
             MenuItem backMenuItem = new MenuItem("Back", () => { mainMenu.SetPage(""); }, 999);
-            mainMenu.AddMenuItem("SaveGameManager", saveMenuItem);
+            mainMenu.AddMenuItem("SaveGameManager", backMenuItem);
 
             MenuItem backMenuItemLoad = new MenuItem("Back", () => { mainMenu.SetPage("SaveGameManager"); }, 999);
-            mainMenu.AddMenuItem("SaveGameManager_Load", saveMenuItem);
+            mainMenu.AddMenuItem("SaveGameManager_Load", backMenuItemLoad);
 
             MenuItem backMenuItemSave = new MenuItem("Back", () => { mainMenu.SetPage("SaveGameManager"); }, 999);
-            mainMenu.AddMenuItem("SaveGameManager_Save", saveMenuItem);
+            mainMenu.AddMenuItem("SaveGameManager_Save", backMenuItemSave);
 
             for (int i = 1; i <= SaveSlots; i++)
             {
-                loadButtons.Add(new MenuItem("", () => { Load(i); }));
-                saveButtons.Add(new MenuItem("", () => { Save(i); }));
+                int index = i - 1;
+                loadButtons.Add(new MenuItem("", () => { Load(index); }));
+                saveButtons.Add(new MenuItem("", () => { Save(index); }));
+                mainMenu.AddMenuItem("SaveGameManager_Load", loadButtons[index]);
+                mainMenu.AddMenuItem("SaveGameManager_Save", saveButtons[index]);
             }
 
             UpdateButtons();
@@ -56,19 +57,19 @@ namespace SaveGameManager
 
         private void UpdateButtons()
         {
-            for (int i = 1; i <= SaveSlots; i++)
+            for (int i = 0; i < SaveSlots; i++)
             {
                 if (File.Exists($"{root}\\Save_{i}.json"))
                 {
                     var saveJson = File.ReadAllText($"{root}\\Save_{i}.json");
                     var saveGame = System.Text.Json.JsonSerializer.Deserialize<SaveGame>(saveJson);
-                    loadButtons[i].Text = $"Load [{i}]: {saveGame.Completion} | {DateTime.FromFileTimeUtc(saveGame.TimeStamp).ToString("HH:mm yy/MM/dd")}";
-                    saveButtons[i].Text = $"Overwrite [{i}]: {saveGame.Completion} | {DateTime.FromFileTimeUtc(saveGame.TimeStamp).ToString("HH:mm yy/MM/dd")}"; ;
+                    loadButtons[i].Text = $"Load [{i + 1}]: {saveGame.Completion} | {DateTime.FromFileTimeUtc(saveGame.TimeStamp).ToString("HH:mm yy/MM/dd")}";
+                    saveButtons[i].Text = $"Overwrite [{i + 1}]: {saveGame.Completion} | {DateTime.FromFileTimeUtc(saveGame.TimeStamp).ToString("HH:mm yy/MM/dd")}"; ;
                 }
                 else
                 {
-                    loadButtons[i].Text = $"[{i}] --- EMPTY ---";
-                    saveButtons[i].Text = $"[{i}] --- EMPTY ---";
+                    loadButtons[i].Text = $"[{i + 1}] --- EMPTY ---";
+                    saveButtons[i].Text = $"[{i + 1}] --- EMPTY ---";
                 }
                 
                 

@@ -1154,9 +1154,9 @@ namespace BubbleLib.Core
 
         public Sprite(string path, int frames = 1)
         {
-            if (!path.StartsWith("mods/managed/"))
+            if (!path.StartsWith("mods/bubble/"))
             {
-                path = "mods/managed/" + path;
+                path = "mods/bubble/" + path;
             }
             index = Game.Engine.CallFunction("sprite_add", path, 1, false, false, 0, 0);
             width = Game.Engine.CallFunction("sprite_get_width", index);

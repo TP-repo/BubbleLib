@@ -13,8 +13,6 @@ namespace BubbleLib.Core
 
         public abstract string Name { get; }
 
-        internal bool IsInitialized { get; set; } = false;
-
         protected BubbleMod(AurieManagedModule module)
         {
             Module = module;

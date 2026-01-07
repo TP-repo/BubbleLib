@@ -1,4 +1,5 @@
-﻿using YYTKInterop;
+﻿using System.Reflection;
+using YYTKInterop;
 
 namespace BubbleLib.Core
 {
@@ -15,6 +16,7 @@ namespace BubbleLib.Core
             //If initial create event, fill required variables
             if (context.Name.Contains("_Create_") && context.Self.Members.Count == 0)
             {
+                instance = GameInstance.FromObject(context.Self);
                 var global = Game.Engine.GetGlobalObject();
                 GML.SetInstanceVariable(instance, "depth", depth);
                 GML.SetInstanceVariable(Index, "sprite_index", Sprite);
@@ -38,8 +40,11 @@ namespace BubbleLib.Core
 
                 GML.SetInstanceVariable(Index, "can_interact", canInteract);
                 GML.SetInstanceVariable(Index, "when_interact", whenInteract);
-                Bubble.HookMethod(canInteract, CanInteractInternal);
-                Bubble.HookMethod(whenInteract, OnInteractInternal);
+
+                var method_index = Game.Engine.CallFunction("method_get_index", canInteract);
+                Game.Events.AddPostScriptNotification(Bubble.Module, canInteractFunction.ToString().Replace("ref script ", "gml_Script_"), CanInteractInternal);
+
+                Game.Events.AddPostBuiltinNotification(Bubble.Module, "get_timer", OnInteractInternal);
             }
         }
 
@@ -56,7 +61,7 @@ namespace BubbleLib.Core
             return;
         }
 
-        private void OnInteractInternal(ScriptExecutionContext Context)
+        private void OnInteractInternal(BuiltinExecutionContext Context)
         {
             if (Context.Self.IsInstance())
             {
@@ -71,6 +76,6 @@ namespace BubbleLib.Core
 
         protected abstract void CanInteract(ScriptExecutionContext Context);
 
-        protected abstract void OnInteract(ScriptExecutionContext Context);
+        protected abstract void OnInteract(BuiltinExecutionContext Context);
     }
 }

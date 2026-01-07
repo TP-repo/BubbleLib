@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="BubbleLib/BubbleLib.csproj" />
+  <Project Path="Examples/Fireworks/Fireworks.csproj" Id="5deaafbc-8864-4ecf-a5ee-cc9572bd67be" />
   <Project Path="Examples/SaveGameManager/SaveGameManager.csproj" Id="4d5929f8-cb99-4f2b-ad97-0ed78e802849" />
 </Solution>

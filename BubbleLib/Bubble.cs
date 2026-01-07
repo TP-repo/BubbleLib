@@ -2,6 +2,9 @@
 using BubbleLib.Constants;
 using BubbleLib.Core;
 using BubbleLib.GUI;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Loader;
 using YYTKInterop;
 
 namespace BubbleLib
@@ -9,43 +12,23 @@ namespace BubbleLib
     public static class Bubble
     {
         public const string Version = "0.0.1";
-        private static AurieManagedModule? Module;
-        private static readonly Dictionary<string, InstanceBase> Instances = [];
+        
+        private static readonly Dictionary<int, InstanceBase> Instances = [];
         private static bool IsInitialized = false;
         private static readonly List<BubbleMod> Mods = [];
 
         public static string CurrentRoom { get; private set; } = "rm_logo";
-
+        public static AurieManagedModule? Module { get; private set; }
         public static Menu? MainMenu { get; private set; }
         public static Menu? PauseMenu { get; private set; }
 
-        /// <summary>
-        /// Gets and hooks the globally valid script-index from a bound method.
-        /// </summary>
-        /// <param name="method">REF to method-index</param>
-        /// <param name="handler">The handler that should be called</param>
-        public static void HookMethod(GameVariable method, AfterScriptCallbackHandler handler)
+        public static void RegisterInstance(InstanceBase instance)
         {
-            try
+            int id = instance.Id;
+            if (!Instances.ContainsKey(id))
             {
-                var method_index = Game.Engine.CallFunction("method_get_index", method);
-                Game.Events.AddPostScriptNotification(Module, method_index.ToString().Replace("ref script ", "gml_Script_"), handler);
+                Instances.Add(id, instance);
             }
-            catch (Exception ex)
-            {
-                Framework.PrintEx(AurieLogSeverity.Error, $"Error while hooking \"{method}\": {ex}");
-            }
-        }
-
-        public static void RegisterMod(BubbleMod mod)
-        {
-            Mods.Add(mod);
-            if (IsInitialized)
-            {
-                mod.Initialize();
-                mod.IsInitialized = true;
-            }
-            
         }
 
         internal static void SetModule(AurieManagedModule module)
@@ -64,16 +47,43 @@ namespace BubbleLib
             Game.Events.AddPostBuiltinNotification(Module, "room_goto", OnRoomChanged);
 
             CreateMenus();
-
             Framework.Print($"BubbleLib v{Version} loaded");
-
+            var modFiles = Directory.GetFiles($"mods\\bubble", "*.dll");
+            for (int i = 0; i < modFiles.Length; i++)
+            {
+                string? file = modFiles[i];
+                try
+                {
+                    Framework.Print($"Loading mod from file: {file}");
+                    AssemblyLoadContext loadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetAssembly(typeof(Bubble)));
+                    using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
+                    {
+                        var assembly = loadContext.LoadFromStream(fs);
+                        var modType = assembly.GetTypes().FirstOrDefault(t => t.BaseType.FullName == typeof(BubbleMod).FullName);
+                        if (modType != null)
+                        {
+                            var mod = (BubbleMod?)modType.GetConstructor([typeof(AurieManagedModule)])?.Invoke([Module]);
+                            if (mod != null)
+                            {
+                                Mods.Add(mod);
+                                Framework.Print($"Added mod: {mod.Name}");
+                            }
+                            else
+                            {
+                                Framework.PrintEx(AurieLogSeverity.Warning, $"Could not create mod instance from type \"{modType.FullName}\" in file \"{file}\"");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Framework.PrintEx(AurieLogSeverity.Error, $"Error while loading mod from file \"{file}\": {ex}");
+                }
+            }
             foreach (BubbleMod mod in Mods)
             {
-                if (!mod.IsInitialized)
-                {
-                    mod.Initialize();
-                    mod.IsInitialized = true;
-                }
+                Framework.Print($"Initializing mod: {mod.Name}");
+                mod.Initialize();
             }
         }
 
@@ -151,7 +161,7 @@ namespace BubbleLib
                 if (instance != null)
                 {
                     //Perform events for modded instances
-                    string id = instance.ID.ToString();
+                    int id = instance.ID;
                     if (Instances.TryGetValue(id, out InstanceBase? value))
                     {
                         value.PerformEvent(context);

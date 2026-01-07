@@ -20,7 +20,6 @@ namespace BubbleLib
             Bubble.SetModule(module);
             Game.Events.OnFrame += Bubble.OnFrame;
             Game.Events.OnGameEvent += Bubble.OnGameEvent;
-            Framework.Print($"BubbleLib loaded");
             return AurieStatus.Success;
         }
 
