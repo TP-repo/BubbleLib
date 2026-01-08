@@ -37,5 +37,5 @@ Mods can be installed by dropping them into "mods/bubble/"
 If the "bubble" subfolder does not exist, either start your game with BubbleLib installed or create it by hand.
 
 Example Mods:
-- SaveGameManager [HERE](https://github.com/TP-repo/BubbleLib/releases/latest-SGM)
-- Fireworks [HERE](https://github.com/TP-repo/BubbleLib/releases/latest-Fireworks)
+- SaveGameManager [HERE](https://github.com/TP-repo/BubbleLib/releases/latest_SGM)
+- Fireworks [HERE](https://github.com/TP-repo/BubbleLib/releases/latest_Fireworks)
