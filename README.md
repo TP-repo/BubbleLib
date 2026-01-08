@@ -1,4 +1,5 @@
-# BubbleLib
+<img width="343" height="106" alt="image" src="https://github.com/user-attachments/assets/c1a99021-0744-4fb3-9e3a-558014f7bdbc" />
+
 BubbleLib is a Framework and Modloader for the wonderful [Shelldiver](https://store.steampowered.com/app/3862670/Shelldiver/) by Gagonfe
 it uses [YYToolkit](https://github.com/AurieFramework/YYToolkit) and [AurieSharp](https://github.com/AurieFramework/AurieSharp) to attach to the compiled GMK-YYC code.
 
