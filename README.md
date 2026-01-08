@@ -23,9 +23,11 @@ Download the latest version of BubbleLib from [HERE](https://github.com/TP-repo/
 Extract it, it should contain a "mods" folder, just drop that into your Shelldiver directory and you are done. (If it doesnt, drop the BubbleLib.dll into /mods/managed/)
 
 Once you start your game you should be able to see the "Mods" submenu on your main menu screen like this:
+
 ![Ingame](Readme/Ingame.png)
 
 As well as your BubbleLib version at the bottom left:
+
 ![Version](Readme/Version.png)
 
 ## Installing Mods
