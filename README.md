@@ -26,7 +26,7 @@ Once you start your game you should be able to see the "Mods" submenu on your ma
 ![Ingame](Readme/Ingame.png)
 
 As well as your BubbleLib version at the bottom left:
-![Version](readme/Version.png)
+![Version](Readme/Version.png)
 
 ## Installing Mods
 
