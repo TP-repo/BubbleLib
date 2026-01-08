@@ -11,7 +11,7 @@ namespace BubbleLib
 {
     public static class Bubble
     {
-        public const string Version = "0.0.1";
+        public const string Version = "0.0.2";
         
         private static readonly Dictionary<int, InstanceBase> Instances = [];
         private static bool IsInitialized = false;
@@ -48,6 +48,15 @@ namespace BubbleLib
 
             CreateMenus();
             Framework.Print($"BubbleLib v{Version} loaded");
+            LoadMods();
+        }
+
+        private static void LoadMods()
+        {
+            if (!Directory.Exists("mods\\bubble"))
+            {
+                Directory.CreateDirectory("mods\\bubble");
+            }
             var modFiles = Directory.GetFiles($"mods\\bubble", "*.dll");
             for (int i = 0; i < modFiles.Length; i++)
             {
@@ -55,11 +64,11 @@ namespace BubbleLib
                 try
                 {
                     Framework.Print($"Loading mod from file: {file}");
-                    AssemblyLoadContext loadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetAssembly(typeof(Bubble)));
+                    AssemblyLoadContext loadContext = AssemblyLoadContext.GetLoadContext(Assembly.GetAssembly(typeof(Bubble))!)!;
                     using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
                     {
-                        var assembly = loadContext.LoadFromStream(fs);
-                        var modType = assembly.GetTypes().FirstOrDefault(t => t.BaseType.FullName == typeof(BubbleMod).FullName);
+                        var assembly = loadContext!.LoadFromStream(fs);
+                        var modType = assembly.GetTypes().FirstOrDefault(t => t.BaseType?.FullName == typeof(BubbleMod).FullName);
                         if (modType != null)
                         {
                             var mod = (BubbleMod?)modType.GetConstructor([typeof(AurieManagedModule)])?.Invoke([Module]);
